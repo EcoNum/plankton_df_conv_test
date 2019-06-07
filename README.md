@@ -52,7 +52,12 @@ Le premier dataset provient de ZooScanNet
 <https://www.seanoe.org/data/00446/55741/>
 
 ``` r
-zs <- read_fst(path = "data/data_raw/seanoe.fst", to = 10)
+zs <- read("data/data_raw/features_native.csv.gz", n_max = 10)
+#> Parsed with column specification:
+#> cols(
+#>   .default = col_double()
+#> )
+#> See spec(...) for full column specifications.
 names(zs)
 #>  [1] "objid"      "area"       "mean"       "stddev"     "mode"      
 #>  [6] "min"        "max"        "perim."     "width"      "height"    

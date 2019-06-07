@@ -49,7 +49,7 @@ Deux datasets sont utilisés dont le premier provient du SEANOE et le second du 
 Le premier dataset provient de ZooScanNet  <https://www.seanoe.org/data/00446/55741/> 
 
 ```{r}
-zs <- read_fst(path = "data/data_raw/seanoe.fst", to = 10)
+zs <- read("data/data_raw/features_native.csv.gz", n_max = 10)
 names(zs)
 ```
 

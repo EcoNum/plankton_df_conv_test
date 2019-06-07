@@ -7,7 +7,6 @@ bibliography: "../bibliography/zsn.bib"
 
 ```{r setup, results='hide'}
 SciViews::R
-library(fst)
 library(purrr)
 ```
 
@@ -23,15 +22,14 @@ Les variables lié aux distances sont mesurés en pixels (longueur, largeur, air
 
 
 ```{r import}
-zs <- read_fst(path = "../../data/data_raw/seanoe.fst")
-ski <- read_fst(path = "../../data/data_raw/seanoe_skimage.fst")
-zs_class <- read_fst(path = "../../data/data_conv/seanoe_class_set.fst")
+zs <- read("../../data/data_raw/features_native.csv.gz")
+zs_class <- read("../../data/data_raw/taxa.csv.gz")
 zs_class$taxon <- as.factor(zs_class$taxon)
 ```
 
 Le jeu de données obtenues avec ZooProcess comprend pas moins de `r length(names(zs))` variables et `r nrow(zs)` observations, répartit au sein de `r length(levels(zs_class$taxon))` groupes. 
 
-Le jeu de données obtenues avec skimage.measure comprend pour sa part `r length(names(ski))` variables et `r nrow(ski)`. Le nombre de groupes est identique sur les deux jeux de données.
+Le jeu de données obtenues avec skimage.measure n'est pas analysé dans le cadre de ce projet de comparaison entre les variables obtenues avec ZooProcess (seanoe) et ZooImage (Econum).
 
 # ZooScan & ZooProcess
 
@@ -46,7 +44,7 @@ Parmi la grande diversité de paramètres mesurées, deux grands groupes sont di
 
 ```{r}
 zs %>%
-  select(-taxon, -lineage, -objid) %>%
+  select(-objid) %>%
   map(.f = fivenum)
 ```
 
@@ -60,15 +58,6 @@ zs %>%
   map(.f = fivenum)
 ```
 
-
-# Zooscan & skimage.measure.regionprops
-
-
-```{r}
-ski %>%
-  select( -objid) %>%
-  map(.f = fivenum)
-```
 
 # Bibliographie
 

@@ -1,0 +1,321 @@
+---
+title: "Comparaison des variables provenant de seanoe et d'econum"
+author: "Engels Guyliann"
+output:
+  html_notebook:
+    number_sections: yes
+    toc: yes
+---
+
+
+```{r setup, warning=F, message=F, results='hide'}
+# packages
+SciViews::R
+library(fst)
+```
+
+# Desciption des données 
+
+```{r dataset, message=FALSE, results='hide'}
+zs <- read_fst(path = "../../data/data_raw/seanoe.fst")
+en <- read_fst(path = "../../data/data_raw/econum_set.fst")
+```
+
+Le seanoe comprend `r nrow(zs)` observations et `r ncol(zs)` variables. Les organismes planctoniques sont classé en `r length(levels(as.factor(zs$taxon)))` groupes. L'econum comprend `r nrow(en)` observations et `r ncol(en)` variables. Les organismes planctoniques sont classé en `r length(levels(as.factor(en$Class)))` groupes.
+
+## seanoe
+
+Le dataset zs est composé des variables suivantes :
+
+```{r}
+names(zs)
+```
+
+Les groupes déterminés sont dénombré de la manière suivante : 
+
+```{r}
+table(sort(zs$taxon))
+```
+
+## econum
+
+Le dataset en est composé des variables suivantes :
+
+```{r}
+names(en)
+```
+
+Les groupes déterminés sont dénombré de la manière suivante : 
+
+```{r}
+table(sort(en$Class))
+```
+
+Les variables ainsi que les groupes sont différents dans les deux datasets.
+
+# Correspondance des groupes 
+
+Pour réaliser une correspondance entre des groupes différents lié de ce fait à une classification différente est de réliser une clé de classification la plus précise possible afin de faire correspondre les autres classifications avec la clé de référence.
+
+Cette clé de correpondance est mise au point par Rémy Dugauquier.
+
+# Correspondance des variables
+
+Une première approche est de comparer les noms des variables.
+
+```{r}
+zs$origin <- "villefr"
+names(zs) -> names_zs
+
+en$origin <- "econum"
+names(en) %>% str_to_lower() -> t
+names(en) <- t
+names(en) -> names_en
+```
+
+```{r}
+commun_names <- names_zs[names_zs %in% names_en]
+commun_names <- commun_names[commun_names != "origin"]
+```
+
+`r length(commun_names)` variables ont un nom similaire listé ci-dessous : 
+
+```{r}
+commun_names
+```
+
+Afin de ne pas comparer l'ensemble des groupes, un sous-ensemble va être réalisé 
+
+```{r}
+#neco <- c("fritillariidae", "scyphozoa_nd")
+#nsea <- c("Fritillariidae", "Scyphozoa")
+
+ neco <- "fritillariidae"
+ nsea <- "Fritillariidae" 
+(n_gr <- tibble(econum = neco, seanoe = nsea))
+```
+
+
+```{r}
+# filter dataset
+eco <- en[en$class %in% neco, ]
+vf <- zs[zs$taxon %in% nsea, ]
+
+# change name taxon into class
+colnames(vf)[colnames(vf) == "taxon"] <- "class"
+```
+
+```{r}
+plot_descri <- function(data1, data2, var, ...){
+  # variable
+  vars <- c(var, "class", "origin")
+  # filter
+  dt1 <- data1[ , vars]
+  dt2 <- data2[ , vars]
+  # combine
+  dt <- bind_rows(dt1, dt2)
+  # plot
+  boxplot(dt[[1]] ~ dt[[2]], data = dt, ylab = var, ...)
+}
+```
+
+Une approche naïve de comparaison des variables met en avant les grandes différences entre ces dernières. Malgré le nom similaire, 
+
+```{r}
+for(i in 1:length(commun_names)){
+  plot_descri(data1 = eco, data2 = vf, var = commun_names[i])
+}
+```
+
+## Conversion des pixels en millimètres
+
+```{r}
+pix_conv <- 0.01058
+(commun_names_pix <- c("perim.", "width", "height", "major", "minor", "feret"))
+```
+
+Dans les métadonnées liées aux fichiers **ZIDB**, on retrouve la valeur de calibration des pixels qui est de `r pix_conv`. Avec ce valeurs, il est possible de convertir les variables suivantes exprimées en pixels `r commun_names_pix`
+
+```{r}
+source("../../R/pix_to_mm.R")
+```
+
+```{r}
+vf %>%
+  map_at(.at = commun_names_pix,.f =  pix_to_mm) -> vf
+vf <- as_tibble(vf)
+```
+
+```{r}
+for(i in 1:length(commun_names_pix)){
+  plot_descri(data1 = eco, data2 = vf, var = commun_names_pix[i])
+}
+```
+
+## Conversion des pixels^2 en millimètre^2 
+
+La variable area est exprimé en $pixel^2$ dans le dataset de Villefranche alors qu'elle est exprimé en $mm^2$ dans le dataset d'ECONUN. En utilisant la valeur de conversion `r pix_conv` mise au carré nous convertissons efficacement la variable `area` pour donner `r pix_conv^2`
+
+```{r}
+plot_descri(data1 = eco, data2 = vf, var = "area")
+```
+
+
+```{r}
+vf$area <- pix_to_mm(vf$area, pix_conv = 0.01058^2)
+plot_descri(data1 = eco, data2 = vf, var = "area")
+```
+
+## Conversion des niveaux de gris
+
+```{r}
+source("../../R/grayscale_std.R")
+```
+
+Les variables ci-dessous expriment les nuances de gris :  
+
+```{r}
+(gray <- c("mean", "stddev", "mode","min", "max", "median"))
+```
+
+
+```{r}
+vf %>%
+  map_at(.at = gray, .f = grayscale_std) %>% as_tibble() -> vf
+```
+
+```{r}
+for(i in 1:length(gray)){
+  plot_descri(data1 = eco, data2 = vf, var = gray[i])
+}
+```
+
+Malgré le fait d'avoir standardisé les valeurs entre 0 et 1, les valeurs ne correspondent toujours pas. Le jeu de données d'ECONUM est exprimé en densité optique (DO). Une valeur de 0 signifie que la particule est transparente alors qu'une valeur de 1 correspond à une particule très opaque. Le jeu de données de seanoe travaille en niveau de gris. Une valeur de 0 signifie que la particule est noire alors qu'une valeur de 255 (donc de 1 si l'on divise les variables par 255) en blanc.
+
+```{r}
+gray1 <- c("mean", "mode", "median", "min", "max")
+
+vf %>%
+  map_at(.at = gray1, .f = grayscale_convert) %>% as_tibble() -> vf
+```
+
+
+```{r}
+for(i in 1:length(gray1)){
+  plot_descri(data1 = eco, data2 = vf, var = gray1[i])
+}
+```
+
+Concernant la valeur minimale et la valeur maximale, il est possible de simplement intervetir le min et le max. 
+
+```{r}
+
+vf %>%
+  dplyr::rename(min1 = min, max1 = max) %>%
+  dplyr::rename(max = min1, min = max1) -> vf
+```
+
+
+```{r}
+mm <- c("min", "max")
+for(i in 1:length(mm)){
+  plot_descri(data1 = eco, data2 = vf, var = mm[i])
+}
+```
+
+## skew
+
+Il semble que l'inverse permet d'obtenir 
+
+```{r}
+vf$skew <- abs(vf$skew)  
+plot_descri(data1 = eco, data2 = vf, var = "skew")
+```
+
+
+# Résumé des modifications
+
+Après les différentes modifications, nous obtenons les résutlats suivants :
+
+```{r}
+for(i in 1:length(commun_names)){
+  plot_descri(data1 = eco, data2 = vf, var = commun_names[i])
+}
+```
+
+# Les variables calculés par la variable `zooimage::calcVars`
+
+Le code de la fonction `calcVars()` donne une information sur les variables calculées 
+
+```{r, eval = FALSE}
+zooimage::calcVars
+```
+
+```{r}
+vf %>%
+  mutate(
+    aspect_ratio = minor/major,
+    range = max - min,
+    mean_pos = (max-mean)/range,
+    sd_norm = stddev/range,
+    cv = stddev/mean *100,
+    mean_dia = (major + minor)/2,
+    meanf_dia = (feret + minor)/2,
+    ecd = 2 * (area/3.14)^(1/2),
+    transpi1 = 1-(ecd/mean_dia),
+    transpi2 = 1-(ecd/meanf_dia),
+    compactness = perim.^2/4/pi/area,
+    pa = perim.^2/16 - area,
+    elongation = ifelse(pa <= 0, 1, area/(perim./4 - pa^0.5)^2)) -> vf
+```
+
+Il est important de mettre en avant le fait que certaine variable ne sont pas calculables `CentBoxD`, `GrayCentBoxD`, `CentroidsD`. 
+
+Les variables calculées sur sont calculables sur les données 
+
+
+```{r}
+eco %>%
+  mutate(
+    aspect_ratio = minor/major,
+    range = max - min,
+    mean_pos = (max-mean)/range,
+    sd_norm = stddev/range,
+    cv = stddev/mean *100,
+    mean_dia = (major + minor)/2,
+    meanf_dia = (feret + minor)/2,
+    ecd = 2 * (area/3.14)^(1/2),
+    transpi1 = 1-(ecd/mean_dia),
+    transpi2 = 1-(ecd/meanf_dia),
+    compactness = perim.^2/4/pi/area,
+    pa = perim.^2/16 - area,
+    elongation = ifelse(pa <= 0, 1, area/(perim./4 - pa^0.5)^2)) -> eco
+```
+
+
+# Conclusions
+
+```{r}
+names(vf) -> names_vf
+names(eco) -> names_eco
+commun <- names_vf[names_vf %in% names_eco]
+```
+
+En conclusion, nous allons sélectionner les variables présents dans les deux jeux de données pour obtenir `r length(commun)`
+
+```{r}
+commun
+```
+
+
+```{r}
+co <- commun[commun != "class"]
+co <- co[co != "origin"]
+
+for(i in 1:length(co)){
+  
+  plot_descri(data1 = eco, data2 = vf, var = co[i])
+}
+```
+
+
