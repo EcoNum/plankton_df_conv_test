@@ -42,7 +42,7 @@ Le but de ce dépôt est de proposer un outils de comparaison et de conversion e
 
 ## M&M
 
-Deux datasets sont utilisés dont le premier provient du SEANOE et le second du service d'ECONUM.
+Deux datasets sont utilisés dont le premier provient du SEANOE et le second du service d'ECONUM. Il s'agit de variables obtenues avec ZooProcess (seanoe) et par ZooImage (econum) sur des images d'organismes planctoniques obtnues avec le ZooScan. 
 
 ### seanoe
 
@@ -63,7 +63,9 @@ en <- read_fst("data/data_raw/econum_set.fst", to = 10)
 names(en)
 ```
 
+# Résultats & discussion
 
+Une simple comparaison des noms des variables montrent des différences.
 
 ## Note
 

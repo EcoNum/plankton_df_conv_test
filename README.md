@@ -44,7 +44,9 @@ différentes.
 ## M\&M
 
 Deux datasets sont utilisés dont le premier provient du SEANOE et le
-second du service d’ECONUM.
+second du service d’ECONUM. Il s’agit de variables obtenues avec
+ZooProcess (seanoe) et par ZooImage (econum) sur des images d’organismes
+planctoniques obtnues avec le ZooScan.
 
 ### seanoe
 
@@ -77,16 +79,19 @@ Le second dataset provient du service d’ECONUM.
 ``` r
 en <- read_fst("data/data_raw/econum_set.fst", to = 10)
 names(en)
-#>  [1] "V1"         "Id"         "Label"      "Item"       "ECD"       
-#>  [6] "Area"       "Mean"       "StdDev"     "Mode"       "Min"       
-#> [11] "Max"        "X"          "Y"          "XM"         "YM"        
-#> [16] "Perim."     "BX"         "BY"         "Width"      "Height"    
-#> [21] "Major"      "Minor"      "Angle"      "Circ."      "Feret"     
-#> [26] "IntDen"     "Median"     "Skew"       "Kurt"       "RawIntDen" 
-#> [31] "FeretX"     "FeretY"     "FeretAngle" "MinFeret"   "AR"        
-#> [36] "Round"      "Solidity"   "XStart"     "YStart"     "Dil"       
-#> [41] "Class"
+#>  [1] "ECD"        "Area"       "Mean"       "StdDev"     "Mode"      
+#>  [6] "Min"        "Max"        "X"          "Y"          "XM"        
+#> [11] "YM"         "Perim."     "BX"         "BY"         "Width"     
+#> [16] "Height"     "Major"      "Minor"      "Angle"      "Circ."     
+#> [21] "Feret"      "IntDen"     "Median"     "Skew"       "Kurt"      
+#> [26] "RawIntDen"  "FeretX"     "FeretY"     "FeretAngle" "MinFeret"  
+#> [31] "AR"         "Round"      "Solidity"   "XStart"     "YStart"    
+#> [36] "Dil"        "Class"
 ```
+
+# Résultats & discussion
+
+Une simple comparaison des noms des variables montrent des différences.
 
 ## Note
 
