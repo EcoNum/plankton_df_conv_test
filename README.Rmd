@@ -36,7 +36,6 @@ Les méthodes et outils employés varient pour numériser, découper et mesurer 
 
 Il est dès lors indispensable de trouver des solutions afin de comparer puis de convertir les observations obtenues par chaque méthode.
 
-
 ## But
 
 Le but de ce dépôt est de proposer un outils de comparaison et de conversion entre deux jeux de données obtenu par des outils et méthodes différentes. 

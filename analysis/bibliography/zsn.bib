@@ -1,0 +1,86 @@
+@misc{zsn,
+type = "Dataset",
+year = "2018",
+title = "ZooScanNet: plankton images captured with the ZooScan",
+journal = "",
+editor = "",
+volume = "",
+number = "",
+pages = "",
+author = "Elineau Amanda, Desnos Corinne, Jalabert Laetitia, Olivier Marion, Romagnan Jean-Baptiste, Brandao Manoela, Lombard Fabien, Llopis Natalia, Courboulès Justine, Caray-Counil Louis, Serranito Bruno, Irisson Jean-Olivier, Picheral Marc, Gorsky Gaby, Stemmann Lars",
+url = "https://www.seanoe.org/data/00446/55741/",
+organization = "",
+address = "",
+doi = "https://doi.org/10.17882/55741",
+abstract = "<p>Plankton was sampled with various nets, from bottom or 500m depth to the surface, in many oceans of the world. Samples were imaged with a ZooScan. The full images were processed with ZooProcess which generated regions of interest (ROIs) around each individual object and a set of associated features measured on the object (see Gorsky et al 2010 for more information). The same objects were re-processed to compute features with the scikit-image toolbox (<a href= http://scikit-image.org >http://scikit-image.org</a>). The 1,433,278 resulting objects were sorted by a limited number of operators, following a common taxonomic guide, into 93 taxa, using the web application EcoTaxa (<a href= http://ecotaxa.obs-vlfr.fr >http://ecotaxa.obs-vlfr.fr</a>).</p>
+
+<p>The archive contains:</p>
+
+<p><strong>taxa.csv.gz</strong></p>
+
+<p>Table of the classification of each object in the dataset, with columns</p>
+
+<ul>
+	<li><em>objid</em>: unique object identifier in EcoTaxa (integer number).</li>
+	<li><em>taxon</em>: taxonomic name. Ambiguous names are made unique by including the name of the parent taxon in parentheses, after the name of the taxon.</li>
+	<li><em>lineage</em>: full taxonomic lineage corresponding to this taxon.</li>
+</ul>
+
+<p><strong>features_native.csv.gz</strong></p>
+
+<p>Table of morphological features computed by ZooProcess. All features are computed on the object only, not the background. All area/length measures are in pixels. All grey levels are in encoded in 8 bits (0=black, 255=white). With columns</p>
+
+<ul>
+	<li><em>objid</em>: same as above</li>
+	<li><em>area</em>: area</li>
+	<li><em>mean</em>: mean grey</li>
+	<li><em>stddev</em>: standard deviation of greys</li>
+	<li><em>mode</em>: modal grey</li>
+	<li><em>min</em>: minimum grey</li>
+	<li><em>max</em>: maximum grey</li>
+	<li><em>perim.</em>: perimeter</li>
+	<li><em>width</em>,<em>height</em> dimensions</li>
+	<li><em>major</em>,<em>minor</em>: length of major,minor axis of the best fitting ellipse</li>
+	<li><em>circ.</em>: circularity: 4<em>pi</em>(area/perim.^2)</li>
+	<li><em>feret</em>: maximal feret diameter</li>
+	<li><em>intden</em>: integrated density: mean*area</li>
+	<li><em>median</em>: median grey</li>
+	<li><em>skew</em>,<em>kurt</em>: skewness,kurtosis of the histogram of greys</li>
+	<li><em>%area</em>: proportion of the image corresponding to the object</li>
+	<li><em>area_exc</em>: area excluding holes</li>
+	<li><em>fractal</em>: fractal dimension of the perimeter</li>
+	<li><em>skelarea</em>: area of the one-pixel wide skeleton of the image</li>
+	<li><em>slope</em>: slope of the cumulated histogram of greys</li>
+	<li><em>histcum1</em>,<em>2</em>,<em>3</em>: grey level at quantiles 0.25, 0.5, 0.75 of the histogram of greys</li>
+	<li><em>nb1</em>,<em>2</em>,<em>3</em>: number of objects after thresholding at the grey levels above</li>
+	<li><em>symetrieh</em>,<em>symetriev</em>: index of horizontal,vertical symmetry</li>
+	<li><em>symetriehc</em>,<em>symetrievc</em>: same but after thresholding at level histcum1</li>
+	<li><em>convperim</em>,<em>convarea</em>: perimeter,area of the convex hull of the object</li>
+	<li><em>fcons</em>: contrast</li>
+	<li><em>thickr</em>: thickness ratio: maximum thickness/mean thickness</li>
+	<li><em>elongation</em>: elongation index: major/minor</li>
+	<li><em>range</em>: range of greys: max-min</li>
+	<li><em>meanpos</em>: relative position of the mean grey: (max-mean)/range</li>
+	<li><em>cv</em>: coefficient of variation of greys: 100*(stddev/mean)</li>
+	<li><em>sr</em>: index of variation of greys: 100*(stddev/range)</li>
+	<li><em>perimferet</em>: index of the relative complexity of the perimeter: perim/feret</li>
+	<li><em>perimmajor</em>: index of the relative complexity of the perimeter: perim/major</li>
+</ul>
+
+<p><strong>features_skimage.csv.gz</strong></p>
+
+<p>Table of morphological features recomputed with skimage.measure.regionprops on the ROIs produced by ZooProcess. See <a href= http://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops >http://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops</a> for documentation.</p>
+
+<p><strong>inventory.txt</strong></p>
+
+<p>Tree view of the taxonomy and number of images in each taxon, displayed as text.</p>
+
+<p><strong>map.png</strong></p>
+
+<p>Map of the sampling locations, to give an idea of the diversity sampled in this dataset.</p>
+
+<p><strong>imgs</strong></p>
+
+<p>Directory containing images of each object, named according to the object id <em>objid</em> and sorted in subdirectories according to their taxon.</p>",
+key = ""
+}

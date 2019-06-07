@@ -1,0 +1,74 @@
+---
+title: "Analyse de particularité sur le fichiers senoe"
+output: html_notebook
+abstract: "Les données utilisés sont disponible via le site suivant : <https://www.seanoe.org/data/00446/55741/>"
+bibliography: "../bibliography/zsn.bib"
+---
+
+```{r setup, results='hide'}
+SciViews::R
+library(fst)
+library(purrr)
+```
+
+Sea scientific open data publication (SEANOE) met à dispisition des images d'organismes planctoniques capturé avec le Zooscan ainsi que les paramètres mesurés sur ces organismes [@zsn]. 
+
+Deux outils sont employés afin de mesurer les variables associées aux images :
+
+- ZooProcess 
+
+Les variables lié aux distances sont mesurés en pixels (longueur, largeur, aire,...). Les variables lié aux niveaux de gris (0 = Noir et 255 = Blanc) .
+
+- [skimage.measure.regionprops](https://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops).
+
+
+```{r import}
+zs <- read_fst(path = "../../data/data_raw/seanoe.fst")
+ski <- read_fst(path = "../../data/data_raw/seanoe_skimage.fst")
+zs_class <- read_fst(path = "../../data/data_conv/seanoe_class_set.fst")
+zs_class$taxon <- as.factor(zs_class$taxon)
+```
+
+Le jeu de données obtenues avec ZooProcess comprend pas moins de `r length(names(zs))` variables et `r nrow(zs)` observations, répartit au sein de `r length(levels(zs_class$taxon))` groupes. 
+
+Le jeu de données obtenues avec skimage.measure comprend pour sa part `r length(names(ski))` variables et `r nrow(ski)`. Le nombre de groupes est identique sur les deux jeux de données.
+
+# ZooScan & ZooProcess
+
+Parmi la grande diversité de paramètres mesurées, deux grands groupes sont discernables :
+
+- variable lié à la taille des particules
+- variable lié à aux nuances de grix de la particules
+
+```{r}
+(gray <- c("mean", "mode","min", "max", "median"))
+```
+
+```{r}
+zs %>%
+  select(-taxon, -lineage, -objid) %>%
+  map(.f = fivenum)
+```
+
+La niveau de de nuance de gris s'étalent sur l'ensemble de la gamme allant de 0 à 255.
+
+
+```{r}
+gray <- c("mean", "mode","min", "max", "median")
+zs %>%
+  select(gray) %>%
+  map(.f = fivenum)
+```
+
+
+# Zooscan & skimage.measure.regionprops
+
+
+```{r}
+ski %>%
+  select( -objid) %>%
+  map(.f = fivenum)
+```
+
+# Bibliographie
+
