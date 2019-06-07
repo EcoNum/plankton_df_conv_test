@@ -17,11 +17,14 @@ library(fst)
 # Desciption des données 
 
 ```{r dataset, message=FALSE, results='hide'}
-zs <- read_fst(path = "../../data/data_raw/seanoe.fst")
+zs <- left_join(
+  read("../../data/data_raw/features_native.csv.gz"), 
+  read("../../data/data_raw/taxa.csv.gz"),
+  by = "objid")
 en <- read_fst(path = "../../data/data_raw/econum_set.fst")
 ```
 
-Le seanoe comprend `r nrow(zs)` observations et `r ncol(zs)` variables. Les organismes planctoniques sont classé en `r length(levels(as.factor(zs$taxon)))` groupes. L'econum comprend `r nrow(en)` observations et `r ncol(en)` variables. Les organismes planctoniques sont classé en `r length(levels(as.factor(en$Class)))` groupes.
+Le seanoe comprend `r nrow(zs)` observations et `r ncol(zs)` variables. Les organismes planctoniques sont classé en `r length(levels(as.factor(zs$taxon)))` groupes. 
 
 ## seanoe
 
@@ -34,7 +37,7 @@ names(zs)
 Les groupes déterminés sont dénombré de la manière suivante : 
 
 ```{r}
-table(sort(zs$taxon))
+levels(as.factor(zs$taxon))
 ```
 
 ## econum
@@ -45,19 +48,7 @@ Le dataset en est composé des variables suivantes :
 names(en)
 ```
 
-Les groupes déterminés sont dénombré de la manière suivante : 
-
-```{r}
-table(sort(en$Class))
-```
-
-Les variables ainsi que les groupes sont différents dans les deux datasets.
-
-# Correspondance des groupes 
-
-Pour réaliser une correspondance entre des groupes différents lié de ce fait à une classification différente est de réliser une clé de classification la plus précise possible afin de faire correspondre les autres classifications avec la clé de référence.
-
-Cette clé de correpondance est mise au point par Rémy Dugauquier.
+Il s'agit d'un jeu de donnée exemple ne contenant que des fritillariidae et des scyphozoa_nd
 
 # Correspondance des variables
 
@@ -225,7 +216,7 @@ for(i in 1:length(mm)){
 
 ## skew
 
-Il semble que l'inverse permet d'obtenir 
+Il semble que l'inverse permet d'obtenir une variable cohérente pour la variable `skew`
 
 ```{r}
 vf$skew <- abs(vf$skew)  
